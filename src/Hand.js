@@ -1,18 +1,14 @@
 import React from 'react';
 
 const Hand = (props) => {
-  const randomCard = (cards) => {
-    return cards[Math.floor(Math.random()*cards.length)]
-  }
+
   return (
     <div>
       <h1>{props.player.name}</h1>
       <ul>
-        <li>{randomCard(props.cards)}</li>
-        <li>{randomCard(props.cards)}</li>
-        <li>{randomCard(props.cards)}</li>
-        <li>{randomCard(props.cards)}</li>
-        <li>{randomCard(props.cards)}</li>
+        {props.hand.map(card => {
+          return <li>{card}</li>
+        })}
       </ul>
     </div>
   )

@@ -18,16 +18,30 @@ class HandsContainer extends Component {
       "QH", "QC", "QS", "QD",
       "KH", "KC", "KS", "KD",
       "AH", "AC", "AS", "AD",
-    ]
+    ],
+    hand1: [],
+    hand2: []
   }
 
   render() {
+    const player1 = this.props.players[0]
+    const player2 = this.props.players[1]
+    const randomCard = (cards) => {
+      return cards[Math.floor(Math.random()*cards.length)]
+    }
+
+    const dealCards = () => {
+      this.setState({
+        hand1: [...randomCard(this.state.cards), randomCard(this.state.cards), randomCard(this.state.cards), randomCard(this.state.cards), randomCard(this.state.cards)],
+        hand2: [...randomCard(this.state.cards), randomCard(this.state.cards), randomCard(this.state.cards), randomCard(this.state.cards), randomCard(this.state.cards)]
+      })
+    }
+
     return (
       <div>
-        <h1>Here is where the hands go</h1>
-        {this.props.players.map(player => {
-          return <Hand key={player.name} player={player} cards={this.state.cards}/>
-        })}
+        <button onClick={() => dealCards()}>Deal!</button>
+        <Hand key={player1.name} player={player1} hand={this.state.hand1}/>
+        <Hand key={player2.name} player={player2} hand={this.state.hand2}/>
       </div>
     )
   }
