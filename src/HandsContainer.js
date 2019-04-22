@@ -21,7 +21,7 @@ class HandsContainer extends Component {
     ],
     hand1: [],
     hand2: [],
-    winningHand: 0
+    winner: null
   }
 
   render() {
@@ -186,7 +186,13 @@ class HandsContainer extends Component {
     const checkWinner = () => {
       console.log(scoreHand(this.state.hand1))
       console.log(scoreHand(this.state.hand2))
-      // this.setState({winningHand: updateWinner(this.state.hand1, this.state.hand2)}, () => console.log(this.state.winningHand))
+      if (scoreHand(this.state.hand1).score === scoreHand(this.state.hand2).score) {
+        console.log("tied")
+      } else if ((scoreHand(this.state.hand1).score > scoreHand(this.state.hand2).score)) {
+        this.setState({winner: player1})
+      } else {
+        this.setState({winner: player2})
+      }
     }
 
     const randomCard = (cards) => {
@@ -196,7 +202,8 @@ class HandsContainer extends Component {
     const dealCards = () => {
       this.setState({
         hand1: [randomCard(this.state.cards), randomCard(this.state.cards), randomCard(this.state.cards), randomCard(this.state.cards), randomCard(this.state.cards)],
-        hand2: [randomCard(this.state.cards), randomCard(this.state.cards), randomCard(this.state.cards), randomCard(this.state.cards), randomCard(this.state.cards)]
+        hand2: [randomCard(this.state.cards), randomCard(this.state.cards), randomCard(this.state.cards), randomCard(this.state.cards), randomCard(this.state.cards)],
+        winner: null
       })
     }
 
@@ -207,17 +214,22 @@ class HandsContainer extends Component {
           <div className="row">
             <div className="col-md-6">
               <div className="jumbotron">
-                <Hand key={player1.name} player={player1} hand={this.state.hand1}/>
+                <Hand player={player1} hand={this.state.hand1}/>
               </div>
             </div>
             <div className="col-md-6">
               <div className="jumbotron">
-                <Hand key={player2.name} player={player2} hand={this.state.hand2}/>
+                <Hand player={player2} hand={this.state.hand2}/>
               </div>
             </div>
           </div>
         </div>
         <button type="button" className="btn btn-info" onClick={() => checkWinner(this.state.hand1, this.state.hand2)}>Check Winner</button>
+        <div className="jumbotron">
+          {this.state.winner &&
+            <h2>{this.state.winner} wins!</h2>
+          }
+        </div>
       </div>
     )
   }

@@ -4,7 +4,7 @@ const Hand = (props) => {
 
   return (
     <div>
-      <h1>{props.player.name}</h1>
+      <h1>{props.player}</h1>
         <div className="row">
           {props.hand.map(card => {
             return (

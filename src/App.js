@@ -5,12 +5,8 @@ import './App.css';
 class App extends Component {
   state={
     players: [
-      {
-        name: "Ted"
-      },
-      {
-        name: "Louis"
-      }
+        "Ted",
+        "Louis"
     ]
   }
 
