@@ -17,7 +17,7 @@ class App extends Component {
   render() {
     return (
       <div className="App">
-        <h1>Hello world</h1>
+        <h1>Let's play some poker</h1>
         <HandsContainer players={this.state.players}/>
       </div>
     );

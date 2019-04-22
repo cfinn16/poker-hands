@@ -30,12 +30,21 @@ class HandsContainer extends Component {
 
     const handValues = (hand) => {
       return hand.map(card => {
-        return card.charAt(0)
+        if (card.charAt(0) === "1") {
+          return parseInt(card.charAt(0) + card.charAt(1))
+        }
+        return parseInt(card.charAt(0))
       }).sort()
     }
 
+    const suits = (hand) => {
+      return hand.map(card => {
+        return card.charAt(card.length - 1)
+      })
+    }
+
     const containsPair = (hand) => {
-      const values = handValues(hand)
+      const values = handValues(sequencedHand(hand)).sort((a, b) => a - b)
       for (let i=0; i<values.length - 1; i++) {
         if (values[i] === values[i+1]) {
           return true
@@ -44,18 +53,140 @@ class HandsContainer extends Component {
       return false
     }
 
-    const updateWinner = (hand1, hand2) => {
-      if (containsPair(hand1) && !containsPair(hand2)) {
-        return 1
-      } else if (containsPair(hand2) && !containsPair(hand1)) {
-        return 2
+    const containsTwoPair = (hand) => {
+      const sortedHand = hand.sort()
+      const firstTwo = sortedHand.slice(0, 2)
+      const lastThree = sortedHand.slice(2)
+      const firstThree = sortedHand.slice(0, 3)
+      const lastTwo = sortedHand.slice(3)
+      if (containsPair(firstTwo) && containsPair(lastThree)) {
+        return true
+      } else if (containsPair(firstThree) && containsPair(lastTwo)) {
+        return true
       } else {
-        return 0
+      return false
+      }
+    }
+
+    const containsThreeOfAKind = (hand) => {
+      const values = handValues(sequencedHand(hand)).sort((a, b) => a - b)
+      for (let i=0; i<values.length - 2; i++) {
+        if (values[i] === values[i+1] && values[i] === values[i+2]) {
+          return true
+        }
+      }
+      return false
+    }
+
+    const containsFourOfAKind = (hand) => {
+      const values = handValues(sequencedHand(hand)).sort((a, b) => a - b)
+      for (let i=0; i<values.length - 3; i++) {
+        if (values[i] === values[i+1] && values[i] === values[i+2] && values[i] === values[i+3]) {
+          return true
+        }
+      }
+      return false
+    }
+
+    const isFlush = (hand) => {
+      if ([...new Set(suits(hand))].length === 1) {
+        return true
+      } else {
+        return false
+      }
+    }
+
+    const sequencedHand = (hand) => {
+      return hand.map(card => {
+        const splitCard = card.split('')
+        if (splitCard[0] === 'J') {
+          splitCard[0] = '11'
+        } else if (splitCard[0] === 'Q') {
+          splitCard[0] = '12'
+        } else if (splitCard[0] === 'K') {
+          splitCard[0] = '13'
+        } else if (splitCard[0] === 'A') {
+          splitCard[0] = '14'
+        }
+        return splitCard.join('')
+      })
+    }
+
+    const isFullHouse = (hand) => {
+      const values = handValues(sequencedHand(hand)).sort((a, b) => a - b)
+      if (values[0] === values[1] && values[2] === values[3] && values[2] === values[4]){
+        return true
+      } else if (values[3] === values[4] && values[0] === values[1] && values[0] === values[2]) {
+        return true;
+      } else {
+        return false;
+      }
+    }
+
+    const isStraight = (hand) => {
+      const sortedValues = handValues(sequencedHand(hand)).sort((a, b) => a - b)
+      for (let i=0; i < sortedValues.length - 1; i++) {
+        if (sortedValues[i+1] !== sortedValues[i] -1) {
+          return false
+        }
+      }
+      return true
+    }
+
+    const scoreHand = (hand) => {
+      if (isStraight(hand) && isFlush(hand)) {
+        return {
+          score: 9,
+          name: 'Straight Flush'
+        }
+      } else if (containsFourOfAKind(hand)) {
+        return {
+          score: 8,
+          name: 'Four of a Kind'
+        }
+      } else if (isFullHouse(hand)) {
+        return {
+          score: 7,
+          name: 'Full House'
+        }
+      }
+       else if (isFlush(hand)) {
+        return {
+          score: 6,
+          name: 'Flush'
+        }
+      } else if (isStraight(hand)) {
+        return {
+          score: 5,
+          name: 'Straight'
+        }
+      } else if (containsThreeOfAKind(hand)) {
+        return {
+          score: 4,
+          name: "Three of a Kind"
+        }
+      } else if (containsTwoPair(hand)) {
+        return {
+          score: 3,
+          name: "Two Pair"
+        }
+      } else if (containsPair(hand)) {
+        return {
+          score: 2,
+          name: "Pair"
+        }
+      } else {
+        return {
+          score: 1,
+          name: 'High Card'
+        }
       }
     }
 
     const checkWinner = () => {
-      this.setState({winningHand: updateWinner(this.state.hand1, this.state.hand2)}, () => console.log(this.state.winningHand))  
+      console.log(scoreHand(this.state.hand1))
+      console.log(scoreHand(this.state.hand2))
+      // this.setState({winningHand: updateWinner(this.state.hand1, this.state.hand2)}, () => console.log(this.state.winningHand))
     }
 
     const randomCard = (cards) => {
@@ -71,10 +202,22 @@ class HandsContainer extends Component {
 
     return (
       <div>
-        <button onClick={() => dealCards()}>Deal!</button>
-        <Hand key={player1.name} player={player1} hand={this.state.hand1}/>
-        <Hand key={player2.name} player={player2} hand={this.state.hand2}/>
-        <button onClick={() => checkWinner(this.state.hand1, this.state.hand2)}>Check Winner</button>
+        <button type="button" className="btn btn-primary" onClick={() => dealCards()}>Deal!</button>
+        <div className="container">
+          <div className="row">
+            <div className="col-md-6">
+              <div className="jumbotron">
+                <Hand key={player1.name} player={player1} hand={this.state.hand1}/>
+              </div>
+            </div>
+            <div className="col-md-6">
+              <div className="jumbotron">
+                <Hand key={player2.name} player={player2} hand={this.state.hand2}/>
+              </div>
+            </div>
+          </div>
+        </div>
+        <button type="button" className="btn btn-info" onClick={() => checkWinner(this.state.hand1, this.state.hand2)}>Check Winner</button>
       </div>
     )
   }
