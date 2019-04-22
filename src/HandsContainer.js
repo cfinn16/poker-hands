@@ -24,33 +24,40 @@ class HandsContainer extends Component {
     winningHand: 0
   }
 
-  componentDidUpdate(){
+  render() {
+    const player1 = this.props.players[0]
+    const player2 = this.props.players[1]
+
     const handValues = (hand) => {
       return hand.map(card => {
         return card.charAt(0)
       }).sort()
     }
 
-    console.log(handValues(this.state.hand1))
-    console.log(handValues(this.state.hand2))
     const containsPair = (hand) => {
       const values = handValues(hand)
       for (let i=0; i<values.length - 1; i++) {
         if (values[i] === values[i+1]) {
           return true
-        }        
+        }
       }
       return false
     }
-    console.log(containsPair(this.state.hand1))
-    console.log(containsPair(this.state.hand2))
 
+    const updateWinner = (hand1, hand2) => {
+      if (containsPair(hand1) && !containsPair(hand2)) {
+        return 1
+      } else if (containsPair(hand2) && !containsPair(hand1)) {
+        return 2
+      } else {
+        return 0
+      }
+    }
 
-  }
+    const checkWinner = () => {
+      this.setState({winningHand: updateWinner(this.state.hand1, this.state.hand2)}, () => console.log(this.state.winningHand))  
+    }
 
-  render() {
-    const player1 = this.props.players[0]
-    const player2 = this.props.players[1]
     const randomCard = (cards) => {
       return cards[Math.floor(Math.random()*cards.length)]
     }
@@ -67,6 +74,7 @@ class HandsContainer extends Component {
         <button onClick={() => dealCards()}>Deal!</button>
         <Hand key={player1.name} player={player1} hand={this.state.hand1}/>
         <Hand key={player2.name} player={player2} hand={this.state.hand2}/>
+        <button onClick={() => checkWinner(this.state.hand1, this.state.hand2)}>Check Winner</button>
       </div>
     )
   }
