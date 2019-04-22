@@ -20,7 +20,32 @@ class HandsContainer extends Component {
       "AH", "AC", "AS", "AD",
     ],
     hand1: [],
-    hand2: []
+    hand2: [],
+    winningHand: 0
+  }
+
+  componentDidUpdate(){
+    const handValues = (hand) => {
+      return hand.map(card => {
+        return card.charAt(0)
+      }).sort()
+    }
+
+    console.log(handValues(this.state.hand1))
+    console.log(handValues(this.state.hand2))
+    const containsPair = (hand) => {
+      const values = handValues(hand)
+      for (let i=0; i<values.length - 1; i++) {
+        if (values[i] === values[i+1]) {
+          return true
+        }        
+      }
+      return false
+    }
+    console.log(containsPair(this.state.hand1))
+    console.log(containsPair(this.state.hand2))
+
+
   }
 
   render() {
@@ -32,8 +57,8 @@ class HandsContainer extends Component {
 
     const dealCards = () => {
       this.setState({
-        hand1: [...randomCard(this.state.cards), randomCard(this.state.cards), randomCard(this.state.cards), randomCard(this.state.cards), randomCard(this.state.cards)],
-        hand2: [...randomCard(this.state.cards), randomCard(this.state.cards), randomCard(this.state.cards), randomCard(this.state.cards), randomCard(this.state.cards)]
+        hand1: [randomCard(this.state.cards), randomCard(this.state.cards), randomCard(this.state.cards), randomCard(this.state.cards), randomCard(this.state.cards)],
+        hand2: [randomCard(this.state.cards), randomCard(this.state.cards), randomCard(this.state.cards), randomCard(this.state.cards), randomCard(this.state.cards)]
       })
     }
 
