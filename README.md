@@ -18,4 +18,4 @@ To complete this project, I used HTML, CSS, Javascript, React, Jest, and Enzyme.
 
 ## Functionality
 
-The 'Deal!' button deals a hand of five card to our two players, Ted and Louis. The 'Check Winner' button calculates the winner according to [poker hand rankings](https://www.cardplayer.com/rules-of-poker/hand-rankings), and displays the winner's name with an explanation of why their hand won.
+The 'Deal!' button deals a hand of five cards to our two players, Ted and Louis. The 'Check Winner' button calculates the winner according to [poker hand rankings](https://www.cardplayer.com/rules-of-poker/hand-rankings), and displays the winner's name with an explanation of why their hand won.
