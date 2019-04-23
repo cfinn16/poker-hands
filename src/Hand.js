@@ -10,7 +10,11 @@ const Hand = (props) => {
             return (
               <div className="col d-flex justify-content-center">
                 <div className="card" style={{padding: "5px"}}>
-                  <h3 className="card-title">{card}</h3>
+                  {card.length === 3 ?
+                    <h4 className="card-title">{card}</h4>
+                    :
+                    <h3 className="card-title">{card}</h3>
+                  }                  
                 </div>
               </div>
             )

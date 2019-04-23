@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import Hand from './Hand.js'
 
-
 class HandsContainer extends Component {
   state = {
     cards: [
@@ -21,7 +20,8 @@ class HandsContainer extends Component {
     ],
     hand1: [],
     hand2: [],
-    winner: null
+    winner: null,
+    winningMessage: ""
   }
 
   render() {
@@ -53,6 +53,26 @@ class HandsContainer extends Component {
       return false
     }
 
+    const findPair = (hand) => {
+      const values = handValues(sequencedHand(hand)).sort((a, b) => a - b)
+      for (let i=0; i<values.length - 1; i++) {
+        if (values[i] === values[i+1]) {
+          return values[i]
+        }
+      }
+    }
+
+    const findHigherPair = (hand) => {
+      const values = handValues(sequencedHand(hand)).sort((a, b) => a - b)
+      const pairValues = []
+      for (let i=0; i<values.length - 1; i++) {
+        if (values[i] === values[i+1]) {
+          pairValues.push(values[i])
+        }
+      }
+      return pairValues.sort((a, b) => a - b)[1]
+    }
+
     const containsTwoPair = (hand) => {
       const sortedHand = hand.sort()
       const firstTwo = sortedHand.slice(0, 2)
@@ -64,7 +84,7 @@ class HandsContainer extends Component {
       } else if (containsPair(firstThree) && containsPair(lastTwo)) {
         return true
       } else {
-      return false
+        return false
       }
     }
 
@@ -183,16 +203,59 @@ class HandsContainer extends Component {
       }
     }
 
+    const findHigherCard = (firstHand, secondHand) => {
+      const sortedFirstHand = handValues(sequencedHand(firstHand)).sort((a, b) => b - a)
+      const sortedSecondHand = handValues(sequencedHand(secondHand)).sort((a, b) => b - a)
+
+      let handIndex = 0
+      const compareCards = (index) => {
+        if (sortedFirstHand[index] > sortedSecondHand[index]){
+          return firstHand
+        } else if (sortedSecondHand[index] > sortedFirstHand[index]){
+          return secondHand
+        } else if (sortedFirstHand[index] === sortedSecondHand[index]) {
+          return compareCards(index + 1)
+        }
+      }
+
+      return compareCards(handIndex)
+    }
+
     const checkWinner = () => {
       console.log(scoreHand(this.state.hand1))
       console.log(scoreHand(this.state.hand2))
+      const handOneHighCard = handValues(sequencedHand(this.state.hand1)).sort((a, b) => b - a)[0]
+      const handTwoHighCard = handValues(sequencedHand(this.state.hand2)).sort((a, b) => b - a)[0]
+      let winner
+      let winningMessage
       if (scoreHand(this.state.hand1).score === scoreHand(this.state.hand2).score) {
-        console.log("tied")
+          const score = scoreHand(this.state.hand1).score
+          switch (score) {
+            case 2:
+            case 4:
+            case 8:
+              winner = findPair(this.state.hand1) > findPair(this.state.hand2) ? player1 : player2
+              winningMessage = "Higher value " + scoreHand(this.state.hand1).name + " wins"
+              break;
+            case 3:
+              winner = findHigherPair(this.state.hand1) > findHigherPair(this.state.hand2) ? player1 : player2
+              winningMessage = "Highest pair is of a higher value"
+              break;
+            default:
+              winner = findHigherCard(this.state.hand1, this.state.hand2) === this.state.hand1 ? player1 : player2
+              winningMessage = "High card breaks the tie"
+          }
       } else if ((scoreHand(this.state.hand1).score > scoreHand(this.state.hand2).score)) {
-        this.setState({winner: player1})
+        winner = player1
+        winningMessage = scoreHand(this.state.hand1).name + " beats " + scoreHand(this.state.hand2).name
       } else {
-        this.setState({winner: player2})
+        winner = player2
+        winningMessage = scoreHand(this.state.hand2).name + " beats " + scoreHand(this.state.hand1).name
       }
+      this.setState({
+        winner,
+        winningMessage
+      })
     }
 
     const randomCard = (cards) => {
@@ -203,13 +266,16 @@ class HandsContainer extends Component {
       this.setState({
         hand1: [randomCard(this.state.cards), randomCard(this.state.cards), randomCard(this.state.cards), randomCard(this.state.cards), randomCard(this.state.cards)],
         hand2: [randomCard(this.state.cards), randomCard(this.state.cards), randomCard(this.state.cards), randomCard(this.state.cards), randomCard(this.state.cards)],
-        winner: null
+        winner: null,
+        winningMessage: ""
       })
     }
 
     return (
       <div>
-        <button type="button" className="btn btn-primary" onClick={() => dealCards()}>Deal!</button>
+        <div className="container" style={{marginTop: "25px", marginBottom: "25px"}}>
+          <button type="button" className="btn btn-primary" onClick={() => dealCards()}>Deal!</button>
+        </div>
         <div className="container">
           <div className="row">
             <div className="col-md-6">
@@ -224,10 +290,17 @@ class HandsContainer extends Component {
             </div>
           </div>
         </div>
-        <button type="button" className="btn btn-info" onClick={() => checkWinner(this.state.hand1, this.state.hand2)}>Check Winner</button>
-        <div className="jumbotron">
+        <div className="container" style={{marginTop: "25px", marginBottom: "25px"}}>
+          {this.state.hand1.length > 0 &&        
+            <button type="button" className="btn btn-info" onClick={() => checkWinner(this.state.hand1, this.state.hand2)}>Check Winner</button>
+          }
+        </div>
+        <div className="jumbotron" style={{margin: "20px"}}>
           {this.state.winner &&
+            <>
             <h2>{this.state.winner} wins!</h2>
+            <h3>{this.state.winningMessage}</h3>
+            </>
           }
         </div>
       </div>
