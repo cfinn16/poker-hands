@@ -18,11 +18,6 @@ const fourOfAKind = ['KS', 'KD', 'KH', 'KC', '6C']
 const straightFlush = ['4S', '5S', '6S', '7S', '8S']
 
 describe('HandsContainer', () => {
-  it('should render correctly', () => {
-    const component = shallow(<HandsContainer players={mockPlayers}/>);
-
-    expect(component).toMatchSnapshot();
-  });
 
   it('deals two hands of five cards each when the deal button is clicked', () => {
     const component = shallow(<HandsContainer players={mockPlayers}/>)
@@ -124,11 +119,3 @@ describe('HandsContainer', () => {
   })
 
 });
-
-
-
-
-
-// test('isFlush should return true if each card in a hand has the same suit', () => {
-//   expect(isFlush(flush)).toBe(true);
-// });
