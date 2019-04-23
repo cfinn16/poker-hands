@@ -145,8 +145,8 @@ class HandsContainer extends Component {
 
     const isStraight = (hand) => {
       const sortedValues = handValues(sequencedHand(hand)).sort((a, b) => a - b)
-      for (let i=0; i < sortedValues.length - 1; i++) {
-        if (sortedValues[i+1] !== sortedValues[i] -1) {
+      for (let i=1; i < sortedValues.length; i++) {
+        if ((sortedValues[i] - 1) !== sortedValues[i-1]) {
           return false
         }
       }
@@ -222,8 +222,6 @@ class HandsContainer extends Component {
     }
 
     const checkWinner = () => {
-      console.log(scoreHand(this.state.hand1))
-      console.log(scoreHand(this.state.hand2))
       const handOneHighCard = handValues(sequencedHand(this.state.hand1)).sort((a, b) => b - a)[0]
       const handTwoHighCard = handValues(sequencedHand(this.state.hand2)).sort((a, b) => b - a)[0]
       let winner
@@ -240,6 +238,10 @@ class HandsContainer extends Component {
             case 3:
               winner = findHigherPair(this.state.hand1) > findHigherPair(this.state.hand2) ? player1 : player2
               winningMessage = "Highest pair is of a higher value"
+              break;
+            case 7:
+              winner = findHigherPair(this.state.hand1) > findHigherPair(this.state.hand2) ? player1 : player2
+              winningMessage = "Triple is of a higher value"
               break;
             default:
               winner = findHigherCard(this.state.hand1, this.state.hand2) === this.state.hand1 ? player1 : player2
@@ -291,7 +293,7 @@ class HandsContainer extends Component {
           </div>
         </div>
         <div className="container" style={{marginTop: "25px", marginBottom: "25px"}}>
-          {this.state.hand1.length > 0 &&        
+          {this.state.hand1.length > 0 &&
             <button type="button" className="btn btn-info" onClick={() => checkWinner(this.state.hand1, this.state.hand2)}>Check Winner</button>
           }
         </div>
