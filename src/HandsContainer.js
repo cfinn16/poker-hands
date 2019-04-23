@@ -222,8 +222,6 @@ class HandsContainer extends Component {
     }
 
     const checkWinner = () => {
-      const handOneHighCard = handValues(sequencedHand(this.state.hand1)).sort((a, b) => b - a)[0]
-      const handTwoHighCard = handValues(sequencedHand(this.state.hand2)).sort((a, b) => b - a)[0]
       let winner
       let winningMessage
       if (scoreHand(this.state.hand1).score === scoreHand(this.state.hand2).score) {

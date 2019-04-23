@@ -6,15 +6,15 @@ const Hand = (props) => {
     <div>
       <h1>{props.player}</h1>
         <div className="row">
-          {props.hand.map(card => {
+          {props.hand.map((card, index) => {
             return (
-              <div className="col d-flex justify-content-center">
+              <div key={index} className="col d-flex justify-content-center">
                 <div className="card" style={{padding: "5px"}}>
                   {card.length === 3 ?
                     <h4 className="card-title">{card}</h4>
                     :
                     <h3 className="card-title">{card}</h3>
-                  }                  
+                  }
                 </div>
               </div>
             )
